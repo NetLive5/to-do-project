@@ -1,11 +1,16 @@
-import React ,{ useState }  from 'react'; 
+import React ,{ useEffect, useState }  from 'react'; 
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View,  } from 'react-native';
 import { Button,Input } from 'react-native-elements';
 import ToDoItem from './ToDoItems';
 
+axios.defaults.baseURL = 'http://localhost:5000/api'
+import axios from 'axios';
+
+
 
 export default function App() {
+  const [error , setError] = useState('')
   const [name , setName] = useState('')
   const [todos, setTodos] = useState([
     {
@@ -14,11 +19,50 @@ export default function App() {
       isChecked: true,
     },
   ])
-  const onPressNameHandler = () => {
+
+
+  useEffect(()=>{ 
+    let clean = false
+
+const fetchTodos = async() => {
+    try {
+      setError('')
+      const {data} = await axios.get('/api/todos')
+
+      setTodos(data)
+    } catch (error) {
+      setError( error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message)
+    }
+}
+
+fetchTodos()
+
+
+return () => clean = true
+}, [])
+
+  const onPressNameHandler = async () => {
     
+    try{
+      setError('')
+     const {data} =  await axios.get('/api/todos' , {name})
+
+     if(data)
+        setTodos(prev => [...prev, { _id: todos.length, name, isChecked: false }])
+        setName('')
      
-      setTodos(prev =>[...prev,{_id: todos.length, name, isChecked:false}])
-      setName('')
+     
+      
+    }catch(error){
+      setError( error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message)
+
+      }
+
+      
     
   }
   const toggleCheackedToDo = idx =>{
@@ -32,7 +76,8 @@ export default function App() {
       <Text style={styles.heading}>ToDo приложение</Text>
       <StatusBar style="auto" />
       
-     
+      <Text style={styles.error}>{error ? `Ошибка: ${error}` : ''}</Text>
+         
       {todos &&
       todos.map((todo, idx) => (
         <ToDoItem
@@ -76,6 +121,12 @@ const styles = StyleSheet.create({
     fontWeight:'700',
     marginBottom: '10%',
   },
+error:{
+fontSize: 15,
+color:'#e74c3c',
+textAlign:'center',
+marginBottom: '5%',
+},
 
   input:{
    borderRadius: 15,

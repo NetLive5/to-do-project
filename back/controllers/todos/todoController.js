@@ -7,7 +7,7 @@ import Todo from '../../models/todo/todoModel.js'
 const getTodos = asyncHandler(async (req, res) => {
 	const todos = await Todo.find({}).sort({ createdAt: 'desc' }).exec()
 
-	res.json(todos || [])
+	res.json(todos)
 })
 
 // @desc    Delete todo
