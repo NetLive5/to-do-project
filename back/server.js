@@ -5,6 +5,7 @@ import express from 'express'
 import connectDB from './config/db.js'
 import { DEVELOPMENT } from './config/constants.js'
 import { notFound, errorHandler } from './middleware/errorMIddleware.js'
+import cors from 'cors';
 
 import toDoRoutes from './routes/todo/toDoRoutes.js'
 
@@ -16,6 +17,9 @@ const app = express()
 if (process.env.NODE_ENV === DEVELOPMENT) app.use(morgan('dev'))
 
 app.use(express.json())
+app.use(cors({
+	origin: ["http://localhost:19006"]
+}));
 
 app.use('/api/todos', toDoRoutes)
 
