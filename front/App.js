@@ -4,9 +4,8 @@ import { StyleSheet, Text, View,  } from 'react-native';
 import { Button,Input } from 'react-native-elements';
 import ToDoItem from './ToDoItems';
 
-axios.defaults.baseURL = 'http://localhost:5000/api'
+axios.defaults.baseURL = "http://localhost:5000"
 import axios from 'axios';
-
 
 
 export default function App() {
@@ -27,7 +26,11 @@ export default function App() {
 const fetchTodos = async() => {
     try {
       setError('')
-      const {data} = await axios.get('/api/todos')
+      const {data} = await axios.get('/api/todos', {
+        headers: {
+          "Access-Control-Allow-Origin": "http://localhost:19006"
+        }
+      })
 
       setTodos(data)
     } catch (error) {
@@ -47,11 +50,17 @@ return () => clean = true
     
     try{
       setError('')
-     const {data} =  await axios.get('/api/todos' , {name})
+     const {data} =  await axios.post('/api/todos' , { name }, {
+      headers: {
+        "Access-Control-Allow-Origin": "http://localhost:19006"
+      }
+    })
 
-     if(data)
-        setTodos(prev => [...prev, { _id: todos.length, name, isChecked: false }])
-        setName('')
+     if(data) {
+      console.log(data)
+      setTodos(prev => [...prev, { _id: todos.length, name, isChecked: false }])
+      setName('')
+     }
      
      
       
